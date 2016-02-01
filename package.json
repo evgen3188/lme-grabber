@@ -1,0 +1,19 @@
+{
+  "name": "lme-grab",
+  "version": "1.0.0",
+  "description": "The grabber for www.letsmasterenglish.com radio podcast",
+  "main": "grab.js",
+  "dependencies": {
+    "date-utils": "^1.2.18",
+    "mkdirp": "^0.5.1",
+    "progress": "^1.1.8",
+    "promise": "^7.1.1",
+    "request": "^2.69.0"
+  },
+  "devDependencies": {},
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "vegen",
+  "license": "ISC"
+}
