@@ -113,13 +113,18 @@ function downloadAll(url, path, filename, limit, offset) {
 
     var pr = Promise.resolve();
 
-    url = url + '?limit=' + limit + '&offset=' + offset;
+    if (options.isReverse) {
+        url = url + '?limit=' + 10000 + '&offset=' + 0;
+    } else {
+        url = url + '?limit=' + limit + '&offset=' + offset;
+    }
     request(url, function(error, response, body) {
         if (!error) {
             var list = JSON.parse(body);
 
             if (options.isReverse) {
                 list.reverse();
+                list = list.slice(offset, offset + limit);
             }
 
             var total = 0;
