@@ -8,10 +8,12 @@ var request = require('request'),
     mkdirp = require('mkdirp');
 
 var baseUrl = 'http://letsmasterenglish.com/radio-api';
-var path = 'podcasts';
 
 var options = {
     isReverse: false,
+    limit: 10,
+    offset: 0,
+    path: 'podcasts',
     lme: false,
     ee: false
 };
@@ -50,6 +52,15 @@ for (var i = 0; i < args.length; i++) {
         case 'ee':
             options.ee = true;
             break;
+
+        case '--path':
+        case '-p':
+            i++;
+            if (i < args.length && args[i]) {
+                options.path = args[i];
+            }
+            break;
+
     }
 }
 
@@ -104,13 +115,6 @@ function downloadAll(url, path, filename, limit, offset) {
 
     mkdirp.sync(path);
 
-    if (!offset) {
-        offset = 0;
-    }
-    if (!limit) {
-        limit = 10;
-    }
-
     var pr = Promise.resolve();
 
     if (options.isReverse) {
@@ -129,6 +133,8 @@ function downloadAll(url, path, filename, limit, offset) {
 
             var total = 0;
 
+            console.log('\033[0;33mStart downloading podcasts to ' + options.path + ' directory\033[0;0m\n');
+
             list.forEach(function(item) {
                 var name;
                 if (filename) {
@@ -146,7 +152,13 @@ function downloadAll(url, path, filename, limit, offset) {
             });
 
             pr.then(function() {
-                console.log('\033[0;33mTotal files downloaded: ' + total + '\033[0;0m');
+                if (total == 0) {
+                    console.log('\033[0;33mNothing is donwloaded\033[0;0m');
+                } else if (total == 1) {
+                    console.log('\033[0;33m' + total + ' podcast is downloaded to ' + options.path + ' directory\033[0;0m');
+                } else {
+                    console.log('\033[0;33m' + total + ' podcasts are downloaded to ' + options.path + ' directory\033[0;0m');
+                }
             });
         } else {
             console.log(err);
@@ -157,13 +169,13 @@ function downloadAll(url, path, filename, limit, offset) {
 if (options.lme) {
     console.log('\033[1;33m --------------- Let\'s Master English --------------- \033[0;0m');
     var lmeUrl = baseUrl + '/lme';
-    var lmePath = path + '/lme';
+    var lmePath = options.path + '/lme';
     downloadAll(lmeUrl, lmePath, 'LetsMasterEnglish', options.limit, options.offset);
 }
 
 if (options.ee) {
     console.log('\033[1;33m --------------- Easy English Expressions --------------- \033[0;0m');
     var lmeUrl = baseUrl + '/ee';
-    var lmePath = path + '/ee';
+    var lmePath = options.path + '/ee';
     downloadAll(lmeUrl, lmePath, 'EasyEnglishExpressions', options.limit, options.offset);
 }
